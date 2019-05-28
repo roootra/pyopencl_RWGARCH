@@ -1,0 +1,18 @@
+PATH_TO_INDICES_FOLDER = "/Users/rutra/ВШЭ/4 курс/ВКР/data/daily/"
+files = os.listdir(PATH_TO_INDICES_FOLDER)
+files.remove(r'.DS_Store')
+files.remove(r'summary.xlsx')
+indices = dict()
+prices = dict()
+returns = dict()
+for file in files:
+    name = file[:-4].upper() # delete .csv residual
+    indices[name] = pd.read_csv(PATH_TO_INDICES_FOLDER + file)
+    indices[name].loc[:, "Date"] = sm.tsa.datetools.dates_from_str(indices[name].loc[:, "Date"])
+    prices[name] = indices[name].loc[:, ["Date", "Close"]]
+    prices[name].loc[:, "Returns"] = np.log(prices[name].loc[:, "Close"]).diff()
+    prices[name] = prices[name].dropna()
+    returns[name] = prices[name].loc[:, ["Date", "Returns"]]
+del (PATH_TO_INDICES_FOLDER, file, files, name)
+with open("/Users/rutra/ВШЭ/4 курс/ВКР/opencl/pyopencl/rwGarchSim/pricesData.pkl", "xb") as fil:
+    pickle.dump(prices, fil, 2)

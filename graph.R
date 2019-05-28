@@ -1,0 +1,11 @@
+library(RcppCNPy)
+library(dplyr)
+library(ggplot2)
+library(ggfan)
+library(fanplot)
+library(reshape2)
+library(readr)
+data <- read_csv(file.choose(), col_names = FALSE)
+
+data.melt <- melt(t(data))
+ggplot(data = data.melt) + geom_fan(aes(x = Var2, y = value))
